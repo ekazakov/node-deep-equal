@@ -2,6 +2,41 @@ var pSlice = Array.prototype.slice;
 var objectKeys = require('./lib/keys.js');
 var isArguments = require('./lib/is_arguments.js');
 
+function compareMaps (actual, expected) {
+  if (actual.size === 0 && expected.size === 0) return true;
+  if (actual.size !== expected.size) return false;
+
+  var actIter = actual.entries();
+  var expIter = expected.entries();
+  var actItem, expItem;
+
+  while ((actItem = actIter.next(), expItem = expIter.next()), !actItem.done) {
+    if (deepEqual(actItem.value[0], expItem.value[0]) === false
+        || deepEqual(actItem.value[1], expItem.value[1]) === false) {
+      return false;
+    }
+  }
+
+  return true;
+}
+
+function compareSets (actual, expected) {
+  if (actual.size === 0 && expected.size === 0) return true;
+  if (actual.size !== expected.size) return false;
+
+  var actIter = actual.values();
+  var expIter = expected.values();
+  var actItem, expItem;
+
+  while ((actItem = actIter.next(), expItem = expIter.next()), !actItem.done) {
+    if (!deepEqual(actItem.value, expItem.value)) {
+      return false;
+    }
+  }
+
+  return true;
+}
+
 var deepEqual = module.exports = function (actual, expected, opts) {
   if (!opts) opts = {};
   // 7.1. All identical values are equivalent, as determined by ===.
@@ -10,7 +45,10 @@ var deepEqual = module.exports = function (actual, expected, opts) {
 
   } else if (actual instanceof Date && expected instanceof Date) {
     return actual.getTime() === expected.getTime();
-
+  } else if (actual instanceof Map && expected instanceof Map) {
+    return compareMaps(actual, expected);
+  } else if (actual instanceof Set && expected instanceof Set) {
+    return compareSets(actual, expected);
   // 7.3. Other pairs that do not both pass typeof value == 'object',
   // equivalence is determined by ==.
   } else if (typeof actual != 'object' && typeof expected != 'object') {

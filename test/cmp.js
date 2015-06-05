@@ -59,10 +59,10 @@ test('arguments class', function (t) {
 test('test the arguments shim', function (t) {
     t.ok(isArguments.supported((function(){return arguments})()));
     t.notOk(isArguments.supported([1,2,3]));
-    
+
     t.ok(isArguments.unsupported((function(){return arguments})()));
     t.notOk(isArguments.unsupported([1,2,3]));
-    
+
     t.end();
 });
 
@@ -86,4 +86,67 @@ test('buffers', function (t) {
 test('booleans and arrays', function (t) {
     t.notOk(equal(true, []));
     t.end();
-})
+});
+
+test('ES6 Map', function (t) {
+    var m1 = new Map([['x', 1], ['y', 2], ['z', 3]]);
+    var m2 = new Map([['x', 1], ['y', 2], ['z', 3]]);
+    var m3 = new Map([['x', 1], ['y', 2], ['z', 4]]);
+    var m4 = new Map([['x', 1], ['y', 2]]);
+
+    t.ok(equal(m1, m2), 'equal maps');
+    t.notOk(equal(m2, m3), 'different values');
+    t.notOk(equal(m3, m4), 'different size');
+    t.ok(equal(new Map(), new Map()), 'empty maps');
+    t.end();
+});
+
+
+test('ES6 Map Nested', function (t) {
+    var m1 = new Map([
+        ['x', 1],
+        ['y', new Map([['z', 3]])]
+    ]);
+    var m2 = new Map([
+        ['x', 1],
+        ['y', new Map([['z', 3]])]
+    ]);
+
+    var m3 = new Map([
+        ['x', 1],
+        ['y', new Map([['z', 3]])]
+    ]);
+    var m4 = new Map([
+        ['x', 1],
+        ['y', new Map([['c', 3]])]
+    ]);
+
+
+    t.ok(equal(m1, m2), 'equal nested meps');
+    t.notOk(equal(m3, m4), 'different key in nested map');
+    t.end();
+});
+
+
+test('ES6 Set', function (t) {
+    var s1 = new Set([1, 2, 3]);
+    var s2 = new Set([1, 2, 3]);
+    var s3 = new Set([1, 2, 4]);
+    var s4 = new Set([1, 2]);
+
+    t.ok(equal(s1, s2), 'equal sets');
+    t.notOk(equal(s2, s3), 'different values');
+    t.notOk(equal(s3, s4), 'different size');
+    t.ok(equal(new Set(), new Set()), 'empty sets');
+    t.end();
+});
+
+test('ES6 Set nested', function (t) {
+    var s1 = new Set([1, new Set([2, 21, 22]), 3]);
+    var s2 = new Set([1, new Set([2, 21, 22]), 3]);
+    var s3 = new Set([1, new Set([2, 21, 2]), 4]);
+    
+    t.ok(equal(s1, s2), 'equal sets');
+    t.notOk(equal(s2, s3), 'different values');
+    t.end();
+});
