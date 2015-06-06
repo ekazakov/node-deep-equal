@@ -121,12 +121,10 @@ test('ES6 Map Nested', function (t) {
         ['y', new Map([['c', 3]])]
     ]);
 
-
     t.ok(equal(m1, m2), 'equal nested meps');
     t.notOk(equal(m3, m4), 'different key in nested map');
     t.end();
 });
-
 
 test('ES6 Set', function (t) {
     var s1 = new Set([1, 2, 3]);
@@ -145,7 +143,7 @@ test('ES6 Set nested', function (t) {
     var s1 = new Set([1, new Set([2, 21, 22]), 3]);
     var s2 = new Set([1, new Set([2, 21, 22]), 3]);
     var s3 = new Set([1, new Set([2, 21, 2]), 4]);
-    
+
     t.ok(equal(s1, s2), 'equal sets');
     t.notOk(equal(s2, s3), 'different values');
     t.end();
